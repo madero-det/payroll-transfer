@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "bank.cbs.api.key",
+    "type": "java.lang.String",
+    "description": "A description for 'bank.cbs.api.key'"
+  },
+  {
+    "name": "bank.cbs.endpoint",
+    "type": "java.lang.String",
+    "description": "A description for 'bank.cbs.endpoint'"
+  },
+  {
+    "name": "spring.cache.redis.max-keys",
+    "type": "java.lang.int",
+    "description": "A description for 'spring.cache.redis.max-keys'"
+  }
+]}
