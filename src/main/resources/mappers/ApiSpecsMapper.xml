@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mcnc.payroll.mapper.ApiSpecsMapper">
+
+	<select id="retrieveListApiSpecs" resultType="MData">
+		SELECT
+			API_NAME            AS "apiName",
+			FIELD_NAME          AS "fieldName",
+			PARENT_FIELD_NAME   AS "parentFieldName",
+			FIELD_DESCRIPTION   AS "fieldDescription",
+			DATA_TYPE           AS "dataType",
+			VALIDATION_TYPE     AS "validationType",
+			CONSTRAINT_VALUE    AS "constraintValue",
+			ERROR_MESSAGE       AS "errorMessage",
+			FIELD_LOCATION      AS "fieldLocation",
+			IS_REQUIRED         AS "isRequired"
+		FROM
+			FRM_API.API_VALIDATION_RULES
+		WHERE API_NAME = #{apiName}
+			AND PARENT_FIELD_NAME = #{parentFieldName}
+			AND FIELD_LOCATION = #{fieldLocation}
+	</select>
+
+</mapper>
