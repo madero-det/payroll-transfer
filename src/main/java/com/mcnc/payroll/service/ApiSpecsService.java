@@ -29,7 +29,7 @@ public class ApiSpecsService {
 			if (Arrays.asList(types).contains(item.getString("dataType"))) {
 				param.setString("apiName", inputData.getString("apiName"));
 				param.setString("parentFieldName", item.getString("fieldName"));
-				item.set("child", this.retrieveListApiSpecs(param));
+				item.set("childFields", this.retrieveListApiSpecs(param));
 			}
 		}
 
