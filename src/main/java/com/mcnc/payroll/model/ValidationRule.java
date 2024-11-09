@@ -1,38 +1,39 @@
 package com.mcnc.payroll.model;
 
 public class ValidationRule {
-    private String ruleName;
-    private String ruleValue;
-    private String errorMessage;
-    
-    public ValidationRule(String ruleName, String ruleValue, String errorMessage) {
-        this.ruleName = ruleName;
-        this.ruleValue = ruleValue;
-        this.errorMessage = errorMessage;
-    }
 
-    public String getRuleName() {
-        return ruleName;
-    }
+	private String ruleType;
+	private String ruleValue;
+	private String errorMessage;
 
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
+	public ValidationRule(String ruleType, String ruleValue, String errorMessage) {
+		this.ruleType = ruleType;
+		this.ruleValue = ruleValue;
+		this.errorMessage = errorMessage;
+	}
 
-    public String getRuleValue() {
-        return ruleValue;
-    }
+	public String getRuleType() {
+		return ruleType;
+	}
 
-    public void setRuleValue(String ruleValue) {
-        this.ruleValue = ruleValue;
-    }
+	public void setRuleType(String ruleType) {
+		this.ruleType = ruleType;
+	}
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+	public String getRuleValue() {
+		return ruleValue;
+	}
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+	public void setRuleValue(String ruleValue) {
+		this.ruleValue = ruleValue;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
 }

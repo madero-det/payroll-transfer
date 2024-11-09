@@ -5,23 +5,38 @@
 
 <mapper namespace="com.mcnc.payroll.mapper.ApiSpecsMapper">
 
-	<select id="retrieveListApiSpecs" resultType="MData">
+	<select id="retrieveListApiSpecs" resultMap="propertyResultMap">
 		SELECT
-			API_NAME            AS "apiName",
-			FIELD_NAME          AS "fieldName",
-			PARENT_FIELD_NAME   AS "parentFieldName",
-			FIELD_DESCRIPTION   AS "fieldDescription",
-			DATA_TYPE           AS "dataType",
-			VALIDATION_TYPE     AS "validationType",
-			CONSTRAINT_VALUE    AS "constraintValue",
-			ERROR_MESSAGE       AS "errorMessage",
-			FIELD_LOCATION      AS "fieldLocation",
-			IS_REQUIRED         AS "isRequired"
+			A.API_NAME            AS "apiName",
+			A.FIELD_NAME          AS "fieldName",
+			A.PARENT_FIELD_NAME   AS "parentFieldName",
+			A.DATA_TYPE           AS "dataType",
+			A.FIELD_LOCATION      AS "fieldLocation",
+			A.IS_REQUIRED         AS "isRequired",
+			B.RULE_TYPE           AS "ruleType",
+			B.RULE_VALUE          AS "ruleValue",
+			B.ERROR_MESSAGE       AS "errorMessage"
 		FROM
-			FRM_API.API_VALIDATION_RULES
-		WHERE API_NAME = #{apiName}
+			FRM_API.API_PROPERTY A
+			LEFT JOIN FRM_API.API_VALIDATION_RULES B 
+				ON B.API_NAME = A.API_NAME AND B.FIELD_NAME = A.FIELD_NAME
+		WHERE A.API_NAME = #{apiName}
 			AND PARENT_FIELD_NAME = #{parentFieldName}
 			AND FIELD_LOCATION = #{fieldLocation}
 	</select>
+
+	<resultMap id="propertyResultMap" type="Property">
+		<result property="apiName" column="apiName"/>
+		<result property="fieldName" column="fieldName"/>
+		<result property="parentFieldName" column="parentFieldName"/>
+		<result property="dataType" column="dataType"/>
+		<result property="fieldLocation" column="fieldLocation"/>
+		<result property="isRequired" column="isRequired"/>
+		<collection property="validationRules" ofType="ValidationRule">
+			<result property="ruleType" column="ruleType"/>
+			<result property="ruleValue" column="ruleValue"/>
+			<result property="errorMessage" column="errorMessage"/>
+		</collection>
+	</resultMap>
 
 </mapper>

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mcnc.payroll.model.MData;
+import com.mcnc.payroll.model.Property;
 import com.mcnc.payroll.service.ApiSpecsService;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ public class RetrievePayrollTransferController {
 	private final ApiSpecsService apiSpecsService;
 
 	@PostMapping("/retrieve")
-	public List<MData> retrieveListPayrollTrasnferData(@RequestBody MData inputData) {
+	public List<Property> retrieveListPayrollTrasnferData(@RequestBody Property inputData) {
 		return apiSpecsService.retrieveListApiSpecs(inputData);
 	}
 

@@ -12,7 +12,7 @@ public enum RuleType {
     SIZE("size", Size.class),
     MIN("min", Min.class),
     MAX("max", Max.class),
-    PATTERN("patter", Pattern.class),
+    PATTERN("pattern", Pattern.class),
     NOTEMPTY("notempty", NotEmpty.class),
     NOTNULL("notnull", NotNull.class);
 

@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.mcnc.payroll.mapper.ApiSpecsMapper;
-import com.mcnc.payroll.model.MData;
+import com.mcnc.payroll.model.Property;
 
 import lombok.AllArgsConstructor;
 
@@ -16,24 +16,18 @@ public class ApiSpecsService {
 
 	private final ApiSpecsMapper apiSpecsMapper;
 
-	public List<MData> retrieveListApiSpecs(MData inputData) {
+	public List<Property> retrieveListApiSpecs(Property inputData) {
 
-		MData param = new MData();
-		param.setString("apiName", inputData.getString("apiName"));
-		param.setString("parentFieldName", inputData.getString("parentFieldName"));
-		param.setString("fieldLocation", inputData.getString("fieldLocation"));
-		List<MData> apiSpecsList = apiSpecsMapper.retrieveListApiSpecs(param);
+		List<Property> properties = apiSpecsMapper.retrieveListApiSpecs(inputData);
 
-		for (MData item : apiSpecsList) {
+		for (Property property : properties) {
 			String[] types = {"object", "array"};
-			if (Arrays.asList(types).contains(item.getString("dataType"))) {
-				param.setString("apiName", inputData.getString("apiName"));
-				param.setString("parentFieldName", item.getString("fieldName"));
-				item.set("childFields", this.retrieveListApiSpecs(param));
+			if (Arrays.asList(types).contains(property.getDataType())) {
+				property.setChildProperties(this.retrieveListApiSpecs(property));
 			}
 		}
 
-		return apiSpecsList;
+		return properties;
 	}
 
 }

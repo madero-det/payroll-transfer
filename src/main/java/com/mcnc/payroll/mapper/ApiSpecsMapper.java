@@ -2,8 +2,8 @@ package com.mcnc.payroll.mapper;
 
 import java.util.List;
 
-import com.mcnc.payroll.model.MData;
+import com.mcnc.payroll.model.Property;
 
 public interface ApiSpecsMapper {
-	List<MData> retrieveListApiSpecs(MData inputData);
+	List<Property> retrieveListApiSpecs(Property property);
 }
