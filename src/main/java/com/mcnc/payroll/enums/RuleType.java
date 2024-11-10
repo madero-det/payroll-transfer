@@ -24,6 +24,15 @@ public enum RuleType {
         this.type = type;
     }
 
+    public static RuleType ruleTypeOf(String value) {
+        for (RuleType ruleType : RuleType.values()) {
+            if (ruleType.getValue().equalsIgnoreCase(value)) {  // Custom matching logic (case-insensitive in this case)
+                return ruleType;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant with value " + value);
+    }
+
     public String getValue() {
         return value;
     }

@@ -64,11 +64,11 @@ public class Property {
 		this.fieldLocation = fieldLocation;
 	}
 
-	public Boolean getIsRequired() {
+	public Boolean isRequired() {
 		return isRequired;
 	}
 
-	public void setIsRequired(Boolean isRequired) {
+	public void setRequired(Boolean isRequired) {
 		this.isRequired = isRequired;
 	}
 

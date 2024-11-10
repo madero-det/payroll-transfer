@@ -6,9 +6,13 @@ import java.util.Set;
 
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.mcnc.payroll.model.MData;
 import com.mcnc.payroll.model.Property;
 import com.mcnc.payroll.model.ValidationRule;
-import com.mcnc.payroll.service.DynamicClassGenerator;
+import com.mcnc.payroll.serializer.DynamicEntityDeserializer;
+import com.mcnc.payroll.service.DynamicEntity;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -37,17 +41,28 @@ public class DynamicClass {
 		);
 
 		// Generate the dynamic class
-		Class<?> dynamicClass = DynamicClassGenerator.generateClassFromMetaData(properties);
+		Class<?> dynamicClass = DynamicEntity.generate(properties);
 		
 		// Create an instance of the class
 		Object instance = dynamicClass.getDeclaredConstructor().newInstance();
+
+		SimpleModule module = new SimpleModule();
+		module.addDeserializer(dynamicClass, new DynamicEntityDeserializer(dynamicClass));
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(module);
+
+		MData data = new MData();
+		data.put("withdrawalAccountNo", "24543625");
+		data.put("transactionCurrencyCode", "");
+		Object pojoInstance = mapper.convertValue(data, dynamicClass);
 
 		// Set field values dynamically
 		setField(instance, "withdrawalAccountNo", "24543625");
 		setField(instance, "transactionCurrencyCode", "");
 
 		// Validate the dynamic instance
-		validateDynamicInstance(instance);
+		validateDynamicInstance(pojoInstance);
 	}
 
 	private static void setField(Object instance, String fieldName, Object value) throws Exception {
