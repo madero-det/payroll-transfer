@@ -14,11 +14,13 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.dynamic.DynamicType.Builder.FieldDefinition.Optional;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import net.bytebuddy.implementation.FieldAccessor;
 
 public class DynamicEntity {
 
@@ -27,24 +29,18 @@ public class DynamicEntity {
 	}
 
 	public static Class<?> generate(List<Property> properties) {
-		DynamicType.Builder<?> builder = new ByteBuddy()
+		Builder<?> builder = new ByteBuddy()
 			.subclass(Object.class)
-			.name("DynamicEntity");
+			.name("DynamicEntity")
+			.annotateType(AnnotationDescription.Builder.ofType(Getter.class).build())
+			.annotateType(AnnotationDescription.Builder.ofType(Setter.class).build());
 
 		// Add fields and method based on the validation rules
 		for (Property property : properties) {
 			String fieldName = property.getFieldName();
 			Class<?> dataType = DataType.dataTypeOf(property.getDataType()).getType();
 
-			// Add method getter and setter base on field name
-			builder
-				.defineMethod("get" + capitalize(fieldName), dataType, Modifier.PUBLIC)
-				.intercept(FieldAccessor.ofField(fieldName))
-				.defineMethod("set" + capitalize(fieldName), Void.class, Modifier.PUBLIC)
-				.withParameter(dataType)
-				.intercept(FieldAccessor.ofField(fieldName));
-
-			DynamicType.Builder.FieldDefinition.Optional<?> fieldBuilder = builder
+			Optional<?> fieldBuilder = builder
 				.defineField(fieldName, dataType, Modifier.PRIVATE);
 
 			// Add validation annotations based on the metadata
@@ -55,16 +51,13 @@ public class DynamicEntity {
 		}
 
 		// Build and load the class
-		return builder.make()
-				.load(DynamicEntity.class.getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
-				.getLoaded();
+		return builder
+			.make()
+			.load(DynamicEntity.class.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+			.getLoaded();
 	}
 
-	private static String capitalize(String string) {
-        return Character.toUpperCase(string.charAt(0)) + string.substring(1);
-    }
-
-	private static DynamicType.Builder<?> addAnnotationValidateField(DynamicType.Builder.FieldDefinition.Optional<?> fieldBuilder, Property property) {
+	private static Builder<?> addAnnotationValidateField(Optional<?> fieldBuilder, Property property) {
 		
 		for (ValidationRule rule : property.getValidationRules()) {
 			if (RuleType.NOTNULL.getValue().equalsIgnoreCase(rule.getRuleType())) {

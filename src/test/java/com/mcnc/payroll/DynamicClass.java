@@ -6,12 +6,8 @@ import java.util.Set;
 
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.mcnc.payroll.model.MData;
 import com.mcnc.payroll.model.Property;
 import com.mcnc.payroll.model.ValidationRule;
-import com.mcnc.payroll.serializer.DynamicEntityDeserializer;
 import com.mcnc.payroll.util.DynamicEntity;
 
 import jakarta.validation.ConstraintViolation;
@@ -57,9 +53,11 @@ public class DynamicClass {
 		// data.put("transactionCurrencyCode", "");
 		// Object pojoInstance = mapper.convertValue(data, dynamicClass);
 
+		System.out.println(instance.getClass().getDeclaredField("withdrawalAccountNo").getAnnotations());
+
 		// Set field values dynamically
 		setField(instance, "withdrawalAccountNo", "24543625");
-		setField(instance, "transactionCurrencyCode", "");
+		setField(instance, "transactionCurrencyCode", "ABC");
 
 		// Validate the dynamic instance
 		validateDynamicInstance(instance);
