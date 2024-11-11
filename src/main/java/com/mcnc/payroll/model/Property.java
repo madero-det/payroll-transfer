@@ -9,11 +9,11 @@ public class Property {
 	String parentFieldName;
 	String dataType;
 	String fieldLocation;
-	Boolean isRequired;
+	boolean isRequired;
 	List<ValidationRule> validationRules;
 	List<Property> childProperties;
 
-	public Property(String apiName, String fieldName, String parentFieldName, String dataType, String fieldLocation, Boolean isRequired, List<ValidationRule> validationRules, List<Property> childProperties) {
+	public Property(String apiName, String fieldName, String parentFieldName, String dataType, String fieldLocation, boolean isRequired, List<ValidationRule> validationRules, List<Property> childProperties) {
 		this.apiName = apiName;
 		this.fieldName = fieldName;
 		this.parentFieldName = parentFieldName;
@@ -64,11 +64,11 @@ public class Property {
 		this.fieldLocation = fieldLocation;
 	}
 
-	public Boolean isRequired() {
+	public boolean isRequired() {
 		return isRequired;
 	}
 
-	public void setRequired(Boolean isRequired) {
+	public void setRequired(boolean isRequired) {
 		this.isRequired = isRequired;
 	}
 

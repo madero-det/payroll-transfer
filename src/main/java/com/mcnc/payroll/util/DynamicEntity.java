@@ -1,4 +1,4 @@
-package com.mcnc.payroll.service;
+package com.mcnc.payroll.util;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -22,7 +22,11 @@ import net.bytebuddy.implementation.FieldAccessor;
 
 public class DynamicEntity {
 
-	public static Class<?> generate(List<Property> properties) throws Exception {
+	private DynamicEntity() {
+		throw new IllegalStateException("Utility class");
+	}
+
+	public static Class<?> generate(List<Property> properties) {
 		DynamicType.Builder<?> builder = new ByteBuddy()
 			.subclass(Object.class)
 			.name("DynamicEntity");
@@ -44,7 +48,7 @@ public class DynamicEntity {
 				.defineField(fieldName, dataType, Modifier.PRIVATE);
 
 			// Add validation annotations based on the metadata
-			if (property.isRequired()) {
+			if (Boolean.TRUE.equals(property.isRequired())) {
 				builder = addAnnotationValidateField(fieldBuilder, property);
 			}
 

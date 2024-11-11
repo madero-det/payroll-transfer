@@ -12,7 +12,7 @@ import com.mcnc.payroll.model.MData;
 import com.mcnc.payroll.model.Property;
 import com.mcnc.payroll.model.ValidationRule;
 import com.mcnc.payroll.serializer.DynamicEntityDeserializer;
-import com.mcnc.payroll.service.DynamicEntity;
+import com.mcnc.payroll.util.DynamicEntity;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -46,23 +46,23 @@ public class DynamicClass {
 		// Create an instance of the class
 		Object instance = dynamicClass.getDeclaredConstructor().newInstance();
 
-		SimpleModule module = new SimpleModule();
-		module.addDeserializer(dynamicClass, new DynamicEntityDeserializer(dynamicClass));
+		// SimpleModule module = new SimpleModule();
+		// module.addDeserializer(dynamicClass, new DynamicEntityDeserializer(dynamicClass));
 
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);
+		// ObjectMapper mapper = new ObjectMapper();
+		// mapper.registerModule(module);
 
-		MData data = new MData();
-		data.put("withdrawalAccountNo", "24543625");
-		data.put("transactionCurrencyCode", "");
-		Object pojoInstance = mapper.convertValue(data, dynamicClass);
+		// MData data = new MData();
+		// data.put("withdrawalAccountNo", "24543625");
+		// data.put("transactionCurrencyCode", "");
+		// Object pojoInstance = mapper.convertValue(data, dynamicClass);
 
 		// Set field values dynamically
 		setField(instance, "withdrawalAccountNo", "24543625");
 		setField(instance, "transactionCurrencyCode", "");
 
 		// Validate the dynamic instance
-		validateDynamicInstance(pojoInstance);
+		validateDynamicInstance(instance);
 	}
 
 	private static void setField(Object instance, String fieldName, Object value) throws Exception {
