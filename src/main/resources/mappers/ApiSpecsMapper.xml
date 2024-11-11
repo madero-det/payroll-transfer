@@ -32,11 +32,13 @@
 		<result property="dataType" column="dataType"/>
 		<result property="fieldLocation" column="fieldLocation"/>
 		<result property="isRequired" column="isRequired"/>
-		<collection property="validationRules" ofType="ValidationRule">
-			<result property="ruleType" column="ruleType"/>
-			<result property="ruleValue" column="ruleValue"/>
-			<result property="errorMessage" column="errorMessage"/>
-		</collection>
+		<collection property="validationRules" ofType="ValidationRule" resultMap="validationRuleResultMap"/>
+	</resultMap>
+
+	<resultMap id="validationRuleResultMap" type="ValidationRule">
+		<result property="ruleType" column="ruleType"/>
+		<result property="ruleValue" column="ruleValue"/>
+		<result property="errorMessage" column="errorMessage"/>
 	</resultMap>
 
 </mapper>
