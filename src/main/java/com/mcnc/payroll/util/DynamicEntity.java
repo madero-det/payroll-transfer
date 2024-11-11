@@ -1,6 +1,5 @@
 package com.mcnc.payroll.util;
 
-import java.lang.foreign.Linker.Option;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
@@ -15,8 +14,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
