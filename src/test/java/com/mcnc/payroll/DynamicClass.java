@@ -12,14 +12,18 @@ public class DynamicClass {
 
 		List<MData> transferList = new ArrayList<>();
 		MData itemTransfer = new MData();
-		itemTransfer.put("recipientAccountNo", "24543625");
-		itemTransfer.put("transactionAmount", 10000);
+		itemTransfer.put("recipientAccountNo", "00036435");
+		itemTransfer.put("transactionAmount", 0);
 		transferList.add(itemTransfer);
+
+		MData verifyCode = new MData();
+		verifyCode.put("otpCode", "123456");
 
 		MData data = new MData();
 		data.put("withdrawalAccountNo", "24543625");
-		data.put("transactionCurrencyCode", "THB");
+		data.put("transactionCurrencyCode", "KHR");
 		data.put("transferList", transferList);
+		data.put("verifyCode", verifyCode);
 
 		ValidatePropertyService validatePropertyService = new ValidatePropertyService();
 		validatePropertyService.validateProperty(data);

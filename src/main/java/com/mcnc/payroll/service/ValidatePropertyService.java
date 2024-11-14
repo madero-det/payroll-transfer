@@ -1,6 +1,5 @@
 package com.mcnc.payroll.service;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -8,7 +7,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcnc.payroll.model.MData;
 import com.mcnc.payroll.model.Property;
@@ -55,11 +53,19 @@ public class ValidatePropertyService {
 					new ValidationRule("notnull", "", "Transaction amount cannot be null."),
 					new ValidationRule("decimalmin", "0.01", "Transaction amount must be greater than or equal to 0.01")
 				), null)
- 			))
+ 			)),
+			new Property("TRN10100521", "verifyCode", "", "object", "request", true, List.of(
+				new ValidationRule("valid", "", "Verify code is invalid.")
+			), List.of(
+				new Property("TRN10100521", "otpCode", "verifyCode", "string", "request", true, List.of(
+					new ValidationRule("notnull", "", "OTP code cannot be null."),
+					new ValidationRule("notempty", "", "OTP code must not be empty.")
+				), null)
+			))
 		);
 
 		// Generate the dynamic class
-		Class<?> dynamicClass = DynamicEntity.generate(properties);
+		Class<?> dynamicClass = DynamicEntity.generate(DynamicEntity.capitalize("TRN10100521"), properties);
 
 		ObjectMapper mapper = new ObjectMapper();
 		Object instance = mapper.convertValue(inputData, dynamicClass);
