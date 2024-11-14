@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcnc.payroll.model.MData;
 import com.mcnc.payroll.model.Property;
 import com.mcnc.payroll.model.ValidationRule;
+import com.mcnc.payroll.util.DynamicEntity;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -24,12 +25,13 @@ public class ValidatePropertyService {
 
 	private Validator validator;
 
-	public void validateProperty(MData inputData) throws Exception {
+	public void validateProperty(MData inputData) {
 		// Initialize validator (typically injected in Spring)
 		try (LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean()) {
 			factoryBean.afterPropertiesSet();
 			validator = factoryBean.getValidator();
 		}
+
 		// Mock metadata from the database
 		List<Property> properties = List.of(
 			new Property("TRN10100521", "withdrawalAccountNo", "", "string", "request", true, List.of(
@@ -40,32 +42,30 @@ public class ValidatePropertyService {
 				new ValidationRule("notnull", "", "Transaction currency code cannot be null."),
 				new ValidationRule("notempty", "", "Transaction currency code cannot be empty."),
 				new ValidationRule("pattern", "^[USD|KHR]{3}$", "Transaction currency code must be USD or KHR.")
-			), null)
+			), null),
+			new Property("TRN10100521", "transferList", "", "list", "request", true, List.of(
+				new ValidationRule("valid", "", "Transfer list is invalid."),
+				new ValidationRule("size", "1,10", 	"Transfer list must have between 1 and 10 items.")
+			), List.of(
+				new Property("TRN10100521", "recipientAccountNo", "transferList", "string", "request", true, List.of(
+					new ValidationRule("notnull", "", "Recipient account number cannot be null."),
+					new ValidationRule("notempty", "", "Recipient account number must not be empty.")
+				), null),
+				new Property("TRN10100521", "transactionAmount", "transferList", "bigdecimal", "request", true, List.of(
+					new ValidationRule("notnull", "", "Transaction amount cannot be null."),
+					new ValidationRule("decimalmin", "0.01", "Transaction amount must be greater than or equal to 0.01")
+				), null)
+ 			))
 		);
 
 		// Generate the dynamic class
-		Class<?> dynamicClass = DynamicClassGenerator.generateClassFromMetaData(properties);
-		
-		// Create an instance of the class
-		Object instance = dynamicClass.getDeclaredConstructor().newInstance();
+		Class<?> dynamicClass = DynamicEntity.generate(properties);
 
-		// Set field values dynamically
-		MData requestData = new MData();
-		requestData.setString("withdrawalAccountNo", "24543625");
-		requestData.setString("transactionCurrencyCode", "");
 		ObjectMapper mapper = new ObjectMapper();
-		instance = mapper.convertValue(requestData, dynamicClass);
-		// setField(instance, "withdrawalAccountNo", "24543625");
-		// setField(instance, "transactionCurrencyCode", "");
+		Object instance = mapper.convertValue(inputData, dynamicClass);
 
 		// Validate the dynamic instance
-		validateDynamicInstance(instance);
-	}
-
-	private void setField(Object instance, String fieldName, Object value) throws Exception {
-		Field field = instance.getClass().getDeclaredField(fieldName);
-		field.setAccessible(true);
-		field.set(instance, value);
+		this.validateDynamicInstance(instance);
 	}
 
 	private void validateDynamicInstance(Object instance) {

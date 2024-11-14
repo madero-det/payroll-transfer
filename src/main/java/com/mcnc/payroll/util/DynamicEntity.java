@@ -4,12 +4,11 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 import com.mcnc.payroll.enums.DataType;
-import com.mcnc.payroll.enums.RuleType;
 import com.mcnc.payroll.model.Property;
 import com.mcnc.payroll.model.ValidationRule;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -56,11 +55,11 @@ public class DynamicEntity {
 		// Build and load the class
 		return builder
 				.make()
-				.load(DynamicEntity.class.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+				.load(DynamicEntity.class.getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
 				.getLoaded();
 	}
 
-	private static String capitalize(String fieldName) {
+	private static String capitalize(String fieldName) {  
 		if (fieldName == null || fieldName.isEmpty()) {
 			return fieldName;
 		}
@@ -70,86 +69,45 @@ public class DynamicEntity {
 	private static Builder<?> addAnnotationValidateField(Optional<?> fieldBuilder, Property property) {
 
 		for (ValidationRule rule : property.getValidationRules()) {
-			fieldBuilder = DynamicEntity.notNull(fieldBuilder, rule);
-			fieldBuilder = DynamicEntity.notEmpty(fieldBuilder, rule);
-			fieldBuilder = DynamicEntity.size(fieldBuilder, rule);
-			fieldBuilder = DynamicEntity.min(fieldBuilder, rule);
-			fieldBuilder = DynamicEntity.max(fieldBuilder, rule);
-			fieldBuilder = DynamicEntity.pattern(fieldBuilder, rule);
+			fieldBuilder = DynamicEntity.applyValidationRule(fieldBuilder, rule);
 		}
 
 		return fieldBuilder;
 	}
 
-	private static Optional<?> pattern(Optional<?> fieldBuilder, ValidationRule rule) {
-		if (RuleType.PATTERN.getValue().equalsIgnoreCase(rule.getRuleType())) {
-			fieldBuilder = fieldBuilder.annotateField(
-				AnnotationDescription.Builder.ofType(Pattern.class)
-					.define("regexp", rule.getRuleValue())
-					.define("message", rule.getErrorMessage())
-					.build()
-			);
+	private static Optional<?> applyValidationRule(Optional<?> fieldBuilder, ValidationRule rule) {
+		switch (rule.getRuleType().toLowerCase()) {
+			case "valid":
+				return fieldBuilder.annotateField(AnnotationDescription.Builder.ofType(Valid.class)
+						.build());
+			case "notnull":
+				return fieldBuilder.annotateField(AnnotationDescription.Builder.ofType(NotNull.class)
+						.define("message", rule.getErrorMessage())
+						.build());
+			case "notempty":
+				return fieldBuilder.annotateField(AnnotationDescription.Builder.ofType(NotEmpty.class)
+						.define("message", rule.getErrorMessage())
+						.build());
+			case "pattern":
+				return fieldBuilder.annotateField(AnnotationDescription.Builder.ofType(Pattern.class)
+						.define("regexp", rule.getRuleValue())
+						.define("message", rule.getErrorMessage())
+						.build());
+			case "decimalmin":
+				return fieldBuilder.annotateField(AnnotationDescription.Builder.ofType(DecimalMin.class)
+						.define("value", rule.getRuleValue())
+						.define("message", rule.getErrorMessage())
+						.build());
+			case "size":
+				String[] sizeRange = rule.getRuleValue().split(",");
+				return fieldBuilder.annotateField(AnnotationDescription.Builder.ofType(Size.class)
+						.define("min", Integer.parseInt(sizeRange[0].trim()))
+						.define("max", Integer.parseInt(sizeRange[1].trim()))
+						.define("message", rule.getErrorMessage())
+						.build());
+			default:
+				throw new IllegalArgumentException("Unknown validation rule: " + rule.getRuleType());
 		}
-		return fieldBuilder;
 	}
 
-	private static Optional<?> max(Optional<?> fieldBuilder, ValidationRule rule) {
-		if (RuleType.MAX.getValue().equalsIgnoreCase(rule.getRuleType())) {
-			fieldBuilder = fieldBuilder.annotateField(
-				AnnotationDescription.Builder.ofType(Max.class)
-					.define("value", Long.parseLong(rule.getRuleValue()))
-					.define("message", rule.getErrorMessage())
-					.build()
-			);
-		}
-		return fieldBuilder;
-	}
-
-	private static Optional<?> min(Optional<?> fieldBuilder, ValidationRule rule) {
-		if (RuleType.MIN.getValue().equalsIgnoreCase(rule.getRuleType())) {
-			fieldBuilder = fieldBuilder.annotateField(
-				AnnotationDescription.Builder.ofType(Min.class)
-					.define("value", Long.parseLong(rule.getRuleValue()))
-					.define("message", rule.getErrorMessage())
-					.build()
-			);
-		}
-		return fieldBuilder;
-	}
-
-	private static Optional<?> size(Optional<?> fieldBuilder, ValidationRule rule) {
-		if (RuleType.SIZE.getValue().equalsIgnoreCase(rule.getRuleType())) {
-			String[] range = rule.getRuleValue().split(",");
-			fieldBuilder = fieldBuilder.annotateField(
-				AnnotationDescription.Builder.ofType(Size.class)
-					.define("min", Integer.parseInt(range[0]))
-					.define("max", Integer.parseInt(range[1]))
-					.define("message", rule.getErrorMessage())
-					.build()
-			);
-		}
-		return fieldBuilder;
-	}
-
-	private static Optional<?> notEmpty(Optional<?> fieldBuilder, ValidationRule rule) {
-		if (RuleType.NOTEMPTY.getValue().equalsIgnoreCase(rule.getRuleType())) {
-			fieldBuilder = fieldBuilder.annotateField(
-				AnnotationDescription.Builder.ofType(NotEmpty.class)
-					.define("message", rule.getErrorMessage())
-					.build()
-			);
-		}
-		return fieldBuilder;
-	}
-
-	private static Optional<?> notNull(Optional<?> fieldBuilder, ValidationRule rule) {
-		if (RuleType.NOTNULL.getValue().equalsIgnoreCase(rule.getRuleType())) {
-			fieldBuilder = fieldBuilder.annotateField(
-				AnnotationDescription.Builder.ofType(NotNull.class)
-					.define("message", rule.getErrorMessage())
-					.build()
-			);
-		}
-		return fieldBuilder;
-	}
 }

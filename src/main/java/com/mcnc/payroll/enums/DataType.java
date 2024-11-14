@@ -1,6 +1,7 @@
 package com.mcnc.payroll.enums;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public enum DataType {
 
@@ -8,7 +9,9 @@ public enum DataType {
     BIGDECIMAL("bigdecimal", BigDecimal.class),
     LONG("long", Long.class),
     BOOLEAN("boolean", Boolean.class),
-    STRING("string", String.class);
+    STRING("string", String.class),
+    LIST("list", List.class),
+    OBJECT("object", Object.class);
 
     String value;
     Class<?> type;

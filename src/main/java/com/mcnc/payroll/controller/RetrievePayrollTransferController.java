@@ -24,7 +24,7 @@ public class RetrievePayrollTransferController {
 	private final ApiSpecsService apiSpecsService;
 
 	@PostMapping("/retrieve")
-	public List<Property> retrieveListPayrollTrasnferData(@RequestBody MData inputData) throws Exception {
+	public List<Property> retrieveListPayrollTrasnferData(@RequestBody MData inputData) {
 		validatePropertyService.validateProperty(inputData);
 		return new ArrayList<>();
 	}
