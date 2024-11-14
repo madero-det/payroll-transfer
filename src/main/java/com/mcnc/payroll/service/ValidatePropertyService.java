@@ -43,7 +43,7 @@ public class ValidatePropertyService {
 			), null),
 			new Property("TRN10100521", "transferList", "", "list", "request", true, List.of(
 				new ValidationRule("valid", "", "Transfer list is invalid."),
-				new ValidationRule("size", "1,10", 	"Transfer list must have between 1 and 10 items.")
+				new ValidationRule("size", "2,10", 	"Transfer list must have between 2 and 10 items.")
 			), List.of(
 				new Property("TRN10100521", "recipientAccountNo", "transferList", "string", "request", true, List.of(
 					new ValidationRule("notnull", "", "Recipient account number cannot be null."),
@@ -59,7 +59,8 @@ public class ValidatePropertyService {
 			), List.of(
 				new Property("TRN10100521", "otpCode", "verifyCode", "string", "request", true, List.of(
 					new ValidationRule("notnull", "", "OTP code cannot be null."),
-					new ValidationRule("notempty", "", "OTP code must not be empty.")
+					new ValidationRule("notempty", "", "OTP code must not be empty."),
+					new ValidationRule("size", "6,6", "OTP code must be 6 digits.")
 				), null)
 			))
 		);
@@ -79,8 +80,9 @@ public class ValidatePropertyService {
 		if (!violations.isEmpty()) {
 			log.info(UUID.randomUUID().toString());
 		}
+		// Handle validation errors
 		for (ConstraintViolation<Object> violation : violations) {
-			log.info(violation.getMessage());
+			log.info(violation.getMessage() + " (" + violation.getPropertyPath() + ")");
 		}
 	}
 

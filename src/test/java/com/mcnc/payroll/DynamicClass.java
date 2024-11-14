@@ -8,12 +8,17 @@ import com.mcnc.payroll.service.ValidatePropertyService;
 
 public class DynamicClass {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		List<MData> transferList = new ArrayList<>();
 		MData itemTransfer = new MData();
 		itemTransfer.put("recipientAccountNo", "00036435");
-		itemTransfer.put("transactionAmount", 0);
+		itemTransfer.put("transactionAmount", 2.30);
+		transferList.add(itemTransfer);
+
+		itemTransfer = new MData();
+		itemTransfer.put("recipientAccountNo", "00036436");
+		itemTransfer.put("transactionAmount", 1.50);
 		transferList.add(itemTransfer);
 
 		MData verifyCode = new MData();
